@@ -421,7 +421,7 @@
      * @param myClock 这里自动插入了依赖的myClock！！
      * @constructor
      */
-    function ClockCtrl($scope,myClock) {
+    function ClockCtrl($scope, myClock) {
         $scope.time = myClock;
     }
 </script>
