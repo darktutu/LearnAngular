@@ -1,6 +1,6 @@
 # AngularJs --concepts(概念)
 
-## 一、总括
+### 一、总括
 
 本文主要是angular组件(components)的概览，并说明他们如何工作。列表如下：
 
@@ -16,7 +16,7 @@
 * module - 配置injector
 * $ - angular的命名空间（namespace）
 
-## 二、启动（Startup）
+### 二、启动（Startup）
 
 下面描述 angular 是如何启动的（参考图表与下面的例子）：
 
@@ -60,7 +60,7 @@
 
  
 
-## 三、Runtime
+### 三、Runtime
 ![](2012090601163790.png)
 
 　　这图表和后面的例子，描述了angular如何通过浏览器event-loop（所有的时间处理函数，以及timer执行的函数，会排在一个queue结构中，利用一个无限的循环，不断从queue中取出函数来执行，这个就是event-loop。来自http://wiki.nodejs.tw/nodejs_from_scratch/javascript-yunodejs/2-1-event-loop）来进行交互。
@@ -127,8 +127,7 @@
 </html>
 ```
  
-
-四、Scope
+### 四、Scope
 
 　　scope的是负责检测model的变化，并作为表达式的执行上下文(execution context)。Scope是在一个类似于DOM结构的层次结构中嵌套的（据之前了解，划分可能跟controller有关）。（详情查看individual directive documentation，看看哪个directive会创建新的scope）
 
@@ -182,11 +181,11 @@
 ```
  
 
-五、Controller
+### 五、Controller
 
+![](2012090701063773.png)
 
-
-复制代码
+``` html
 <!DOCTYPE HTML>
 <html lang="zh-cn" ng-app>
 <head>
@@ -214,39 +213,39 @@
 </script>
 </body>
 </html>
-复制代码
+```
 　　Controller是在view背后的代码(-_-!)。它的职责是构建model，并通过回调函数，将其（model）推送到view中。View是当前scope到template(HTML)的映射（翻译得有点勉强...）。Scope是指挥model到view以及向controller发送event的纽带。
 
 　　Controller与view分离是很重要的，因为：
 
-Controller是写在javascript中的。Javascript是命令式的（imperative）。命令（imperative）是描述应用程序行为的一个好方法。Controller不应该包含任何显示信息（的逻辑）（DOM引用或者HTML片段）
-View模版是写在HTML里的。HTML是声明式的。声明式（的HTML）是描述UI的好方法。View不应该包含任何行为。
-由于Controller不知道自己需要对应哪一个View，使得一个Controller可以（间接）使用多个View。这对于re-skinning（更换皮肤？）、其他设备特定的视图（例如手机与桌面）还有代码的可测性是很重要的。
+* Controller是写在javascript中的。Javascript是命令式的（imperative）。命令（imperative）是描述应用程序行为的一个好方法。Controller不应该包含任何显示信息（的逻辑）（DOM引用或者HTML片段）
+* View模版是写在HTML里的。HTML是声明式的。声明式（的HTML）是描述UI的好方法。View不应该包含任何行为。
+* 由于Controller不知道自己需要对应哪一个View，使得一个Controller可以（间接）使用多个View。这对于re-skinning（更换皮肤？）、其他设备特定的视图（例如手机与桌面）还有代码的可测性是很重要的。
  
 
-六、Model
+### 六、Model
 
-
+![](2012090716235049.png)
 
 　　Model，可以理解为数据对象。它被用作与模版结合，以产生视图。为了将model写入到视图中，model必须被scope所引用。与很多其他框架不一样，angular对model没有任何限制与要求。不需要额外添加class，也不需要通过特殊的特权方法去访问或者改变model。Model的数据类型，可以是原始的类型（string、number……），可以是键值对象({a:1,b:2})，也可以是函数（function() {…}）。简要地说，angular的model只需要是一个普通的javascript对象。
 
  
 
-七、View
+### 七、View
 
 　　view是用户所能看到的东西。view诞生于模版。它与model结合，最终呈现为浏览器DOM。Angular采取一个对于其他很多模版系统来说，很不一样的方式去呈现View。
 
+![](2012090717415747.png)
 
-
-其他模版引擎：很多模版引擎，是通过建立带有特殊标记的HTML字符串来实现的。通常这些模版标记破坏了HTML的语法，这意味着不能通过一般的HTML编辑器去编辑代码（这个嘛…）。模版字符串传入模版引擎，与数据合并。最终生成HTML字符串。这些字符串一般通过.innerHTML的方式写入DOM中，促使浏览器呈现模版内容。当数据发生改变时，这个过程需要一次又一次地重复。模版的粒度与DOM更新的粒度一致。这粒的关键，是模版系统处理字符串。
-Angular：Angular模版的不同之处，在于它是基于DOM的而不是基于字符串的。模版依然需要在HTML中写入一些字符串，但依旧是HTML（不是通过在里面嵌入模版）。浏览器把HTML转换为DOM，然后DOM成为了compiler（angular的模版引擎）的输入。Compiler查找directives，依次在model中设置watches。得出的结果，是一个一直更新的view，不需要重新拼接model与template。model成为了view的唯一数据来源（single source of truth）。
- 八、Directives
+* 其他模版引擎：很多模版引擎，是通过建立带有特殊标记的HTML字符串来实现的。通常这些模版标记破坏了HTML的语法，这意味着不能通过一般的HTML编辑器去编辑代码（这个嘛…）。模版字符串传入模版引擎，与数据合并。最终生成HTML字符串。这些字符串一般通过.innerHTML的方式写入DOM中，促使浏览器呈现模版内容。当数据发生改变时，这个过程需要一次又一次地重复。模版的粒度与DOM更新的粒度一致。这粒的关键，是模版系统处理字符串。
+* Angular：Angular模版的不同之处，在于它是基于DOM的而不是基于字符串的。模版依然需要在HTML中写入一些字符串，但依旧是HTML（不是通过在里面嵌入模版）。浏览器把HTML转换为DOM，然后DOM成为了compiler（angular的模版引擎）的输入。Compiler查找directives，依次在model中设置watches。得出的结果，是一个一直更新的view，不需要重新拼接model与template。model成为了view的唯一数据来源（single source of truth）。
+ ### 八、Directives
 
 　　Directive是一个行为（例如之前文章的例子“躲猫猫”）或DOM转换（自定义标签，里面包含一组DOM），将其名称放在属性、标签名、class名里面都可以触发该directive。Directive允许你以声明的方式扩展HTML的标签。
 
 　　下面的例子，还有一些疑问。就是$render如何触发@_@
 
-复制代码
+``` html
 <!DOCTYPE HTML>
 <html lang="zh-cn" ng-app="myDirective">
 <head>
@@ -295,10 +294,10 @@ Angular：Angular模版的不同之处，在于它是基于DOM的而不是基于
 </script>
 </body>
 </html>
-复制代码
+```
  
 
-九、Filters
+### 九、Filters
 
 　　Filters 扮演一个数据转换（格式化）的角色。通常他们是与地域有关的，不同地域也许会有不同的输出格式。他们在追随了Unix过滤器的精神与类似的语法：|  (pipe)
 
