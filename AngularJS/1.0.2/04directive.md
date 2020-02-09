@@ -1,8 +1,10 @@
-　Directive是教HTML玩一些新把戏的途径。在DOM编译期间，directives匹配HTML并执行。这允许directive注册行为或者转换DOM结构。
+# AngularJs--directive　
+
+Directive是教HTML玩一些新把戏的途径。在DOM编译期间，directives匹配HTML并执行。这允许directive注册行为或者转换DOM结构。
 
 　　Angular自带一组内置的directive，对于建立Web App有很大帮助。继续扩展的话，可以在HTML定义领域特定语言（domain specific language ,DSL)。
 
-一、在HTML中引用directives
+### 一、在HTML中引用directives
 
 　　Directive有驼峰式（camel cased）的风格的命名，如ngBind（放在属性里貌似用不了~）。但directive也可以支蛇底式的命名（snake case），需要通过:（冒号）、-（减号）或_（下划线）连接。作为一个可选项，directive可以用“x-”或者“data-”作为前缀，以满足HTML验证需要。这里列出directive的合法命名：
 
@@ -13,18 +15,18 @@ x-ng-bind
 data-ng-bind
 　　Directive可以放置于元素名、属性、class、注释中。下面是引用myDir这个directive的等价方式。（但很多directive都限制为“属性”的使用方式）
 
-复制代码
-<span my-dir="exp"></span>
+``` html
+    <span my-dir="exp"></span>
 
-<span class="my-dir: exp;"></span>
+    <span class="my-dir: exp;"></span>
 
-<my-dir></my-dir>
+    <my-dir></my-dir>
+    <!-- directive: my-dir exp -->
+```
 
-<!-- directive: my-dir exp -->
-复制代码
-　　Directive可以通过多种方式引用，下面列出N种等价的方式：
+Directive可以通过多种方式引用，下面列出N种等价的方式：
 
-复制代码
+``` html
 <!DOCTYPE HTML>
 <html lang="zh-cn" ng-app>
 <head>
@@ -54,27 +56,27 @@ data-ng-bind
 </script>
 </body>
 </html>
-复制代码
+```
  
 
-二、String interpolation
+### 二、String interpolation
 
 　　在编译过程中，compiler通过$interpolate服务匹配文本与属性中的嵌入表达式（如{{something}}）。这些表达式将会注册为watches，并且作为digest cycle(之前不是digest-loop吗？！)的一部分，一同更新。下面是一个简单的interpolation：
 
-<img src="img/{{username}}.jpg"/>Hello {{username}}!
-三、Compilation process, and directive matching
+`<img src="img/{{username}}.jpg"/>Hello {{username}}!`
+
+### 三、Compilation process, and directive matching
 
 　　HTML“编译”的三个步骤：
 
-　　1. 首先，通过浏览器的标准API，将HTML转换为DOM对象。这是很重要的一步。因为模版必须是可解析（符合规范）的HTML。这里可以跟大多数的模版系统做对比，它们一般是基于字符串的，而不是基于DOM元素的。
+1. 首先，通过浏览器的标准API，将HTML转换为DOM对象。这是很重要的一步。因为模版必须是可解析（符合规范）的HTML。这里可以跟大多数的模版系统做对比，它们一般是基于字符串的，而不是基于DOM元素的。
 
-　　2. 对DOM的编译（compilation）是通过调用$comple()方法完成的。这个方法遍历DOM，对directive进行匹配。如果匹配成功，那么它将与对应的DOM一起，加入到directive列表中。只要所有与指定DOM关联的directive被识别出来，他们将按照优先级排序，并按照这个顺序执行他们的compile() 函数。directive的编译函数（compile function），拥有一个修改DOM结构的机会，并负责产生link() function的解析。$compile()方法返回一个组合的linking function，是所有directive自身的compile function返回的linking function的集合。
+2. 对DOM的编译（compilation）是通过调用$comple()方法完成的。这个方法遍历DOM，对directive进行匹配。如果匹配成功，那么它将与对应的DOM一起，加入到directive列表中。只要所有与指定DOM关联的directive被识别出来，他们将按照优先级排序，并按照这个顺序执行他们的compile() 函数。directive的编译函数（compile function），拥有一个修改DOM结构的机会，并负责产生link() function的解析。$compile()方法返回一个组合的linking function，是所有directive自身的compile function返回的linking function的集合。
 
-　　3. 通过上一步返回的linking function，将模版与scope连接起来。这反过来会调用directive自身的linking function，允许它们在元素上注册一些监听器（listener），以及与scope一起建立一些watches。这样得出的结果，是在scope与DOM之间的一个双向、即时的绑定。scope发生改变时，DOM会得到对应的响应。
+3. 通过上一步返回的linking function，将模版与scope连接起来。这反过来会调用directive自身的linking function，允许它们在元素上注册一些监听器（listener），以及与scope一起建立一些watches。这样得出的结果，是在scope与DOM之间的一个双向、即时的绑定。scope发生改变时，DOM会得到对应的响应。
 
  
-
-复制代码
+``` js
     var $compile = ...; // injected into your code
 
     var scope = ...;
@@ -89,17 +91,18 @@ data-ng-bind
 
     // Step 3: link the compiled template with the scope.
     linkFn(scope);
-复制代码
+```
  
 
-四、Reasons behind the compile/link separation
+### 四、Reasons behind the compile/link separation
 
 　　在这个时候，你可能会想知道为什么编译进程会划分为compile和linke两个步骤。为了明白这一点，让我们看看一个真实的例子（repeater）
-
+``` html
     Hello {{user}}, you have these actions:
     <ul>
         <li ng-repeat="action in user.actions">{{action.description}}</li>
     </ul>
+```
 　　简单地讲，之所以分开compile和linke两步，是因为有时候需要在model改变后，对应的DOM结构也需要改变的情况，如repeaters。
 　　当上面的例子被编译时，编译器会遍历所有节点以寻找directive。{{user}}是一个interpolation directive的例子。ngRepeat又是另外一个directive。但ngRepeat有一个难点。它需要能够很快地为每一个在users.actions中的action制造出新的li的能力。这意味着它为了满足克隆li并且嵌入特定的action（这里是指user的actions的其中一个值）的目的，需要保持一个干净li元素的拷贝，li元素需要被克隆和插入ul元素。但仅仅克隆li元素是不够的。还需要编译li，以便它的directive（{{action.descriptions}}）能够在正确的scope中被解析。原始的方法，一般会简单地插入一个li元素的拷贝，然后编译它。但编译每一个li元素的拷贝会比较缓慢，因为编译过程需要我们遍历DOM节点树，查找directive并运行它们。如果我们有一个编译，需要通过repeater对100个item进行处理，那么我们将陷入性能问题。
 
@@ -113,13 +116,11 @@ data-ng-bind
 连接函数(link function) - 极少directive是没有link function的。link function允许directive在指定的拷贝后的DOM元素实例上注册监听器，也可以将scope中特定内容复制到DOM中。
  
 
-五、写一个directive（简易版）
+### 五、写一个directive（简易版）
 
 　　在这个例子里面，我们将建立一个根据输入格式，显示当前时间的directive。
 
- 
-
-复制代码
+``` html
 <!DOCTYPE HTML>
 <html lang="zh-cn" ng-app="TimeFormat">
 <head>
@@ -171,14 +172,14 @@ data-ng-bind
 </script>
 </body>
 </html>
-复制代码
+```
  
 
 六、写一个directive（详细版）
 
 　　下面是一个创建directive样例（directive对象定义模版）。想看详细列表，请继续往下看。
 
-复制代码
+``` js
 var myModule = angular.module(...);
 
      
@@ -220,12 +221,13 @@ myModule.directive('directiveName', function factory(injectables) {
     return directiveDefinitionObject;
 
  });
-复制代码
+
+``` 
 　　在大多数场景下，我们并不需要精确控制，所以上面的定义是可以化简的。定义模版中的每一部分，将在下面章节讲解。在这个章节，我们仅仅关注定义模版的异构体（isomers of this skeleton，没看懂。。。期待大家补充）。
 
 　　简化代码的第一步是依赖默认值。因此，上面的代码可以简化为：
 
-复制代码
+``` js
     var myModule = angular.module(...);
      
     myModule.directive('directiveName', function factory(injectables) {
@@ -236,29 +238,29 @@ myModule.directive('directiveName', function factory(injectables) {
     　　};
     　　return directiveDefinitionObject;
     });
-复制代码
+```
 　　大多数directive只关心实例，而不是模版转换，所以可以进一步化简（翻译得很勉强。。。期待大家补充）：
 
   
-
+``` js
     var myModule = angular.module(...);
      
     myModule.directive('directiveName', function factory(injectables) {
     　　return function postLink(scope, iElement, iAttrs) { ... }
     });
+```
  
 
-七、工厂方法
+### 七、工厂方法
 
 　　工厂方法负责创建directive。它仅仅使用一次，就在compiler第一次匹配到directive的时候。你可以在这里执行一些初始化操作。工厂方法通过$injector.invoke执行，让它遵守所有注入声明规则（rules of injection annotation），让其变为可注入的。
 
  
 
-八、directive定义对象说明
+### 八、directive定义对象说明
 
  
-
-　　directive定义对象提供了compiler的结构。属性如下：
+directive定义对象提供了compiler的结构。属性如下：
 
  
 
@@ -354,7 +356,7 @@ link - 这里是link function ，将在下面章节详细讲解。这个属性�
 
  
 
-九、Compile function
+### 九、Compile function
 
  
 
@@ -372,7 +374,7 @@ transclude – 一个转换用的linking function:  function(scope,cloneLinking)
 返回包含pre、post属性的object - 允许我们控制在linking phase期间何时调用linking function。详情请看下面关于pre-linking、post-linking function的章节。
  
 
-十、Linking function
+### 十、Linking function
 
 function link( scope, iElement, iAttrs, controller) { … }
 　　link function负责注册DOM事件监听器，也可以进行DOM的更新操作。link function会在模版克隆操作完毕之后执行。这里存放着directive大多数的逻辑。
@@ -393,7 +395,7 @@ Post-link function
 
  
 
-十一、Attributes
+### 十一、Attributes
 
 　　attribute object - 在link()或compile()中作为参数 - 是一个访问以下东东的途径：
 
@@ -403,7 +405,7 @@ directive 之间通讯：所有directive共享一个attribute对象实例，使�
 观察interpolated属性：通过attr.$observe去观察属性值的变化，包括interpolation（例如src=”{{bar}}”）。不单单很有效，而且是简单地获取真实值唯一的办法。因为在linking阶段，interpolation还没被赋值（替换真实值），所以在这时候访问它，结果是undefined。
  
 
-复制代码
+``` html
 <!DOCTYPE HTML>
 <html lang="zh-cn" ng-app="DirectiveProperty">
 <head>
@@ -438,15 +440,14 @@ directive 之间通讯：所有directive共享一个attribute对象实例，使�
 </script>
 </body>
 </html>
-复制代码
- 
+```
 
-十二、理解transclusion和scope
+### 十二、理解transclusion和scope
 
 　　我们经常需要一些可重用的组件。下面是一段伪代码，展示一个简单的dialog组件如何能够工作。
 
 　　
-复制代码
+``` html
 <div>
 
     <button ng-click="show=true">show</button>
@@ -462,11 +463,12 @@ directive 之间通讯：所有directive共享一个attribute对象实例，使�
         Body goes here: {{username}} is {{title}}.
 
 </dialog>
-复制代码
+
+``` 
 　　点击“show”按钮将会打开dialog。dialog有一个标题，与数据“username”绑定，还有一段我们想放置在dialog内部的内容。
 　　下面是一段为了dialog而编写的模版定义：
 
-复制代码
+``` html
 <div ng-show="show()">
 
     <h3>{{title}}</h3>
@@ -482,12 +484,12 @@ directive 之间通讯：所有directive共享一个attribute对象实例，使�
     </div>
 
 </div>
-复制代码
+``` 
 　　这将无法正确渲染，除非我们对scope做一些特殊处理。
 
 　　第一个我们需要解决的问题是，dialog模版期望title会被定义，而在初始化时会与username绑定。此外，按钮需要onOk、onCancel两个function出现在scope里面。这限制了插件的效能（this limits the usefulness of the widget。。。）。为了解决映射问题，通过如下的本地方法（locals，估计在说directive定义模版中的scope）去创建模版期待的本地变量：
 
-复制代码
+``` js
 scope :{
 
     title: 'bind', // set up title to accept data-binding
@@ -499,7 +501,7 @@ scope :{
     show: 'accessor' // create a getter/setter function for visibility.
 
 }
-复制代码
+``` 
 　　在控件scope中创建本地属性，带来了两个问题：
 　　1. isolation（属性隔离？） - 如果用户忘记了在控件模版设置title这个元素属性，那么title将会与祖先scope的属性”title”（如有）绑定。这是不可预知、不可取的。
 
@@ -513,7 +515,7 @@ scope :{
 
 　　因此，最终的directive定义大致如下：
 
-复制代码
+``` js
 transclude:true,
 
 scope :{
@@ -529,11 +531,11 @@ scope :{
     //我试过这么整，失败……请继续往下看
 
 }
-复制代码
+```
 　　我尝试把上面的代码拼凑成一个完整的例子。直接复制的话，无法达到预期效果。但稍作修改后，插件可以运行了。
  
 
-复制代码
+``` html
 <!DOCTYPE html>
 <html ng-app="Dialog">
 <head>
@@ -593,18 +595,18 @@ scope :{
     </script>
 </body>
 </html>
-复制代码
+```
  
 
  
 
-十三、Creating Components
+### 十三、Creating Components
 
 　　我们通常会期望通过复杂的DOM结构替换掉directive（所在的元素？目的大概是使directive内部复杂点，看起来牛点@_@）。这让directive成为使用可复用组件的建立应用的一个快捷方式。
 
 　　下面是一个可复用组件的例子：
 
-复制代码
+``` html
 <!DOCTYPE html>
 <html ng-app="ZippyModule">
 <head>
@@ -676,5 +678,4 @@ scope :{
     </script>
 </body>
 </html>
-复制代码
- 
+```
