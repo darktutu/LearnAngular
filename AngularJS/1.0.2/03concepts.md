@@ -301,7 +301,7 @@
 
 　　Filters 扮演一个数据转换（格式化）的角色。通常他们是与地域有关的，不同地域也许会有不同的输出格式。他们在追随了Unix过滤器的精神与类似的语法：|  (pipe)
 
-复制代码
+``` html
 <!DOCTYPE HTML>
 <html lang="zh-cn" ng-app>
 <head>
@@ -323,18 +323,18 @@
 <script src="../angular-1.0.1.js" type="text/javascript"></script>
 </body>
 </html>
-复制代码
- 
+``` 
 
  十、Modules and the Injector
 
+![](2012090812215170.png)
 
 
 　　Injector是一个服务定位器。每一个Angular应用，都会有一个单独的injector。Injector提供一个通过名称查找对象实例的途径。Injector会在内部cache中保持所有对象实例，所以重复调用相同的名称时，返回的都是同一个对象实例。如果对象不存在，那么它会请求实例工厂（instance factory）去创建一个新实例。
 
 　　Module是一个配置injector的实例工厂的方法，被称为”provider”。
 
-复制代码
+```
     // Create a module
     var myModule = angular.module('myModule', [])
      
@@ -353,12 +353,13 @@
      
     // always true because of instance cache
     $injector.get('serviceA') === $injector.get('serviceA');//true
-复制代码
+```
+
 　　但是injector的真正牛X的地方在于它可以用于调用方法和”instantiate” type。这个美妙的特性是允许method和types请求他们所依赖的资源，而不是寻找他们。
 
  
 
-复制代码
+``` js
     // You write functions such as this one.
     function doSomething(serviceA, serviceB) {
     // do something here.
@@ -381,14 +382,14 @@
     // the cool way of getting dependencies.
     // the $injector will supply the arguments to the function automatically
     $injector.invoke(doSomething); // This is how the framework calls your functions
-复制代码
+```
  
 
 　　注意，我们唯一需要写的，就是我们的function，在function的arguments中列出方法依赖的资源即可！当angular调用function时，他会使用”call”方法，自动填充function agruments。
 
 　　留意下面的例子中是如何在constructor中列出依赖的。当ng-controller实例化controller时，将自动提供所依赖的资源。没有必要去创建、寻找、创建injector引用来加载依赖资源。
 
-复制代码
+``` html
 <!DOCTYPE HTML>
 <html lang="zh-cn" ng-app="timeExample">
 <head>
@@ -426,7 +427,7 @@
 </script>
 </body>
 </html>
-复制代码
+```
  
 
 十一、Angular Namespace
