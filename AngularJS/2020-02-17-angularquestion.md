@@ -1,9 +1,5 @@
+# Angularjs 常见面试题总结
 
----
-title: Angularjs 常见面试题总结
-date: 2020-02-17 10:34:05
-tags: angularjs
----
 
 生成有问题，暂时不md结尾，找时间查一下为什么出错
 
